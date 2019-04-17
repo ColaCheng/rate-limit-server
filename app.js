@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const Cache = require('./lib/cache');
+const requestIp = require('request-ip');
 const maxPerWindow = Config.get('maxPerWindow');
 const port = Config.get('port');
 const windowMs = Config.get('windowMs');
@@ -12,7 +13,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 function rateLimit(req, res, next) {
-  const ip = req.ip;
+  const ip = req.clientIp;
   if (!limitCache.hits[ip] || limitCache.hits[ip] < maxPerWindow) {
     limitCache.increment(ip);
     res.usage = limitCache.hits[ip];
@@ -34,11 +35,12 @@ function rateLimit(req, res, next) {
   }
 }
 
+app.use(requestIp.mw());
 app.use(rateLimit);
 
 app.all('/', function (req, res) {
   if (res.statusCode == 200) {
-    const ip = req.ip;
+    const ip = req.clientIp;
     const usage = res.usage;
     res.format({
       html: _ => {
