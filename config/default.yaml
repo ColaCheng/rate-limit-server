@@ -1,0 +1,4 @@
+# API configuration
+port: 8080
+maxPerWindow: 60
+windowMs: 60000

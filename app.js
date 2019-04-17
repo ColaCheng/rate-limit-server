@@ -1,16 +1,19 @@
+const Config = require('config');
 const path = require('path');
 const express = require('express');
 const app = express();
 const Cache = require('./lib/cache');
-const limitCache = new Cache(60000);
-const max = 5;
+const maxPerWindow = Config.get('maxPerWindow');
+const port = Config.get('port');
+const windowMs = Config.get('windowMs');
+const limitCache = new Cache(windowMs);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 function rateLimit(req, res, next) {
   const ip = req.ip;
-  if (!limitCache.hits[ip] || limitCache.hits[ip] < max) {
+  if (!limitCache.hits[ip] || limitCache.hits[ip] < maxPerWindow) {
     limitCache.increment(ip);
     res.usage = limitCache.hits[ip];
     next();
@@ -51,6 +54,6 @@ app.all('/', function (req, res) {
   }
 });
 
-app.listen(3000, _ => {
-  console.log('Rate limit server listening on port 3000!');
+app.listen(port, _ => {
+  console.log(`Rate limit server listening on port ${port}!`);
 });
