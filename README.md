@@ -1,4 +1,4 @@
-# Simple Rate Limit Server
+# Simple Rate limiting Server
 
 Basic rate-limiting server by Express.
 
