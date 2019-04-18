@@ -38,7 +38,7 @@ function rateLimit(req, res, next) {
 app.use(requestIp.mw());
 app.use(rateLimit);
 
-app.all('/', function (req, res) {
+app.all('/', (req, res) => {
   if (res.statusCode == 200) {
     const ip = req.clientIp;
     const usage = res.usage;
@@ -47,7 +47,7 @@ app.all('/', function (req, res) {
         res.render('index', { ip, usage })
       },
       json: _ => {
-        res.json({ error: { ip, usage } })
+        res.json({ ip, usage })
       },
       default: _ => {
         res.type('txt').send(`ip: ${ip}, usage: ${usage}`)
