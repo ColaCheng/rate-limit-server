@@ -1,5 +1,7 @@
 # Simple Rate limiting Server
 
+[![Build Status](https://travis-ci.org/ColaCheng/rate-limit-server.svg?branch=master)](https://travis-ci.org/ColaCheng/rate-limit-server)
+
 Basic rate-limiting server by Express.
 
 ## Environments variables
