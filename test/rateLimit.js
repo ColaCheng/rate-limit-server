@@ -2,10 +2,11 @@ const express = require("express");
 const assert = require("assert");
 const request = require("supertest");
 const requestIp = require('request-ip');
-const windowMs = 60000;
+const windowMs = 1000;
 const maxPerWindow = 2;
 const RateLimit = require('../lib/rateLimit');
 const rateLimiter = RateLimit({windowMs, maxPerWindow});
+const timer = ms => new Promise( res => setTimeout(res, ms));
 
 const app = express();
 app.use(requestIp.mw());
@@ -70,6 +71,19 @@ describe('Simple rate limit test', _ => {
       rateLimiter.resetAll();
       done();
     });
+  });
+
+  it('over windowMs will reset usage', (done) => {
+    goodRequest(done);
+    goodRequest(done);
+    (async () => {
+      await timer(1000);
+      goodRequest(done, (err, res) => {
+        assert.equal(res.body.usage, 1);
+        rateLimiter.resetAll();
+        done();
+      });
+    })()
   });
 
 });
