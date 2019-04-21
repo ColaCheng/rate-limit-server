@@ -44,7 +44,7 @@ describe('Simple rate limit test', _ => {
       .get("/")
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(429, { error: 'Too Many Requests' })
+      .expect(429, { error: 'Error' })
       .end((err, res) => {
         if (err) {
           return errorHandler(err);
